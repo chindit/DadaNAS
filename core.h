@@ -37,6 +37,7 @@ private slots:
     void viewShares();
     void mountShares(bool status);
     void about();
+    void timerServerState();
 
 private:
     Ui::Core *ui;

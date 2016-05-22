@@ -51,13 +51,13 @@ void Core::startServer(){
     bool result = insBash->sendStartRequest(insTools->getSetting(MAC));
     if(result){
         QMessageBox::information(this, "Requête envoyée", "La demande de démarrage a bien été envoyée.  Le serveur sera allumé d'ici une ou deux minutes.");
-    }
-    else{
         startTimer = new QTimer(this);
         startTimer->setInterval(2*60*1000);
         startTimer->setSingleShot(true);
-        connect(startTimer, SIGNAL(timeout()), this, SLOT(checkServerState()));
+        connect(startTimer, SIGNAL(timeout()), this, SLOT(timerServerState()));
         startTimer->start();
+    }
+    else{
         QMessageBox::warning(this, "Échec du démarrage", "La demande de démarrage n'a pas pu être envoyée.  Vérifiez que:\n1)La commande «wol» est bien disponible sur votre système (sinon, installez-la)"
                                                          "\n2)L'adresse IP du serveur est correcte\n3)L'adresse MAC du serveur est correcte\n4)Vous êtes correctement connecté à Internet");
     }
@@ -123,6 +123,14 @@ void Core::mountShares(bool status){
     else{
         ui->pushButtonMountShare->setText("Monter les répertoires partagés");
         ui->pushButtonMountShare->setStyleSheet("QPushButton{ color: inherit; font-weight: inherit; }");
+    }
+    return;
+}
+
+void Core::timerServerState(){
+    this->checkServerState();
+    if(ui->labelEtat->text() == "Serveur actif!"){
+        QMessageBox::information(this, "Serveur démarré", "Le serveur a correctement démarré.  Bonne utilisation ;)");
     }
     return;
 }

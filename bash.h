@@ -5,8 +5,6 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QStringList>
-#include <QDebug>
-#include "libsudo.h"
 
 
 class Bash : public QObject
