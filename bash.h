@@ -11,11 +11,11 @@ class Bash : public QObject
     Q_OBJECT
 public:
     explicit Bash(QObject *parent = 0);
+    bool getServerState();
+    bool sendStartRequest();
 
 signals:
 
-public slots:
-    bool getServerState();
 };
 
 #endif // BASH_H

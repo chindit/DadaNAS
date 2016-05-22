@@ -67,7 +67,7 @@
         </widget>
        </item>
        <item row="1" column="1" colspan="2">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="labelStopPolicy">
          <property name="text">
           <string>Pas d'odre spécifique</string>
          </property>
@@ -83,16 +83,19 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="pushButtonStart">
          <property name="text">
           <string>Envoyer l'ordre de démarrage</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QPushButton" name="pushButton_3">
+        <widget class="QPushButton" name="pushButtonStopPolicy">
          <property name="text">
           <string>Interdire l'arrêt</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

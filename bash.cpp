@@ -16,3 +16,18 @@ bool Bash::getServerState(){
 
     return (!p_stdout.contains("100% packet loss"));
 }
+
+bool Bash::sendStartRequest(){
+    QProcess wolProcess;
+    QString exec = "wol";
+    QStringList params;
+    params << "BC:5F:F4:07:8C:9C";
+
+    wolProcess.start(exec,params,QIODevice::ReadOnly);
+    wolProcess.waitForFinished(-1);
+
+    if(wolProcess.exitCode() != QProcess::NormalExit){
+        return false;
+    }
+    return true;
+}
