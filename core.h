@@ -10,7 +10,11 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QTimer>
+
 #include "bash.h"
+#include "toolsdialog.h"
+
+#define VERSION "0.1"
 
 namespace Ui {
 class Core;
@@ -30,10 +34,14 @@ public slots:
 
 private slots:
     void changeStopPolicy(bool status);
+    void viewShares();
+    void mountShares(bool status);
+    void about();
 
 private:
     Ui::Core *ui;
     Bash *insBash;
+    ToolsDialog *insTools;
     QTimer *startTimer;
 };
 

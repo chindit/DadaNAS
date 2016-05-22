@@ -2,4 +2,10 @@
     <qresource prefix="/pictures">
         <file>Ressources/loader.gif</file>
     </qresource>
+    <qresource prefix="/menus">
+        <file>Ressources/logo_qt.jpg</file>
+        <file>Ressources/dadanas.png</file>
+        <file>Ressources/options.png</file>
+        <file>Ressources/quitter.png</file>
+    </qresource>
 </RCC>

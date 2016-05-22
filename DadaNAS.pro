@@ -14,12 +14,15 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         core.cpp \
-    bash.cpp
+    bash.cpp \
+    toolsdialog.cpp
 
 HEADERS  += core.h \
-    bash.h
+    bash.h \
+    toolsdialog.h
 
-FORMS    += core.ui
+FORMS    += core.ui \
+    toolsdialog.ui
 
 RESOURCES += \
     pictures.qrc

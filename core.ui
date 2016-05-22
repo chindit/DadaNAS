@@ -6,12 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>338</height>
+    <width>457</width>
+    <height>346</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Core</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="pictures.qrc">
+    <normaloff>:/menus/Ressources/dadanas.png</normaloff>:/menus/Ressources/dadanas.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -91,6 +95,12 @@
        </item>
        <item row="0" column="1">
         <widget class="QPushButton" name="pushButtonStopPolicy">
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="text">
           <string>Interdire l'arrêt</string>
          </property>
@@ -109,9 +119,19 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
        <item row="0" column="0">
-        <widget class="QPushButton" name="pushButton_4">
+        <widget class="QPushButton" name="pushButtonShare">
          <property name="text">
           <string>Voir les répertoires partagés</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="pushButtonMountShare">
+         <property name="text">
+          <string>Monter les répertoires partagés</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -125,7 +145,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>457</width>
      <height>23</height>
     </rect>
    </property>
@@ -136,21 +156,63 @@
     <addaction name="action_propos_de_DadaNAS"/>
     <addaction name="action_propos_de_Qt"/>
    </widget>
+   <widget class="QMenu" name="menuOutils">
+    <property name="title">
+     <string>O&amp;utils</string>
+    </property>
+    <addaction name="actionOptions"/>
+   </widget>
+   <widget class="QMenu" name="menuFichier">
+    <property name="title">
+     <string>Fichier</string>
+    </property>
+    <addaction name="actionQuitter"/>
+   </widget>
+   <addaction name="menuFichier"/>
+   <addaction name="menuOutils"/>
    <addaction name="menuAide"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_propos_de_DadaNAS">
+   <property name="icon">
+    <iconset resource="pictures.qrc">
+     <normaloff>:/menus/Ressources/dadanas.png</normaloff>:/menus/Ressources/dadanas.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;À propos de DadaNAS</string>
    </property>
   </action>
   <action name="action_propos_de_Qt">
+   <property name="icon">
+    <iconset resource="pictures.qrc">
+     <normaloff>:/menus/Ressources/logo_qt.jpg</normaloff>:/menus/Ressources/logo_qt.jpg</iconset>
+   </property>
    <property name="text">
     <string>À &amp;propos de Qt</string>
    </property>
   </action>
+  <action name="actionOptions">
+   <property name="icon">
+    <iconset resource="pictures.qrc">
+     <normaloff>:/menus/Ressources/options.png</normaloff>:/menus/Ressources/options.png</iconset>
+   </property>
+   <property name="text">
+    <string>Options</string>
+   </property>
+  </action>
+  <action name="actionQuitter">
+   <property name="icon">
+    <iconset resource="pictures.qrc">
+     <normaloff>:/menus/Ressources/quitter.png</normaloff>:/menus/Ressources/quitter.png</iconset>
+   </property>
+   <property name="text">
+    <string>Quitter</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="pictures.qrc"/>
+ </resources>
  <connections/>
 </ui>
