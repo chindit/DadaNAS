@@ -105,17 +105,18 @@ void Core::changeStopPolicy(bool status){
 }
 
 void Core::viewShares(){
-#ifndef Q_OS_UNIX
-    QMessageBox::warning(this, "Système non compatible", "Malheureusement, cette fonctionnalité n'est pour l'instant compatible qu'avec les systèmes UNIX");
-#else
+#if defined(Q_OS_UNIX) || defined(Q_OS_WIN)
     insBash->openShares(insTools->getSetting(User), insTools->getSetting(Pass), insTools->getSetting(IP), insTools->getSetting(FileManager));
+#else
+    QMessageBox::warning(this, "Système non compatible", "Malheureusement, cette fonctionnalité n'est pour l'instant compatible qu'avec les systèmes UNIX");
 #endif
 }
 
 void Core::mountShares(bool status){
+#if defined(Q_OS_UNIX) || defined(Q_OS_WIN)
     if(!insBash->getServerState(insTools->getSetting(IP)))
         return;
-    insBash->mountShares(status, insTools->getSetting(IP), insTools->getSetting(User), insTools->getSetting(Pass));
+    insBash->mountShares(status, insTools->getSetting(IP), insTools->getSetting(User), insTools->getSetting(Pass), insTools->getSetting(Partage));
     if(status){
         ui->pushButtonMountShare->setText("Démonter les répertoires partagés");
         ui->pushButtonMountShare->setStyleSheet("QPushButton{ color: red; font-weight: bold; }");
@@ -124,6 +125,9 @@ void Core::mountShares(bool status){
         ui->pushButtonMountShare->setText("Monter les répertoires partagés");
         ui->pushButtonMountShare->setStyleSheet("QPushButton{ color: inherit; font-weight: inherit; }");
     }
+#else
+    QMessageBox::warning(this, "Système non compatible", "Malheureusement, cette fonctionnalité n'est pour l'instant compatible qu'avec les systèmes UNIX ou Windows");
+#endif
     return;
 }
 
