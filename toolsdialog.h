@@ -9,7 +9,7 @@ namespace Ui {
 class ToolsDialog;
 }
 
-enum Settings{ IP, MAC, User, Pass, FileManager };
+enum Settings{ IP, MAC, User, Pass, FileManager, Partage };
 
 class ToolsDialog : public QDialog
 {

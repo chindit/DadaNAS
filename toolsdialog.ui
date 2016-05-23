@@ -18,16 +18,6 @@
     <normaloff>:/menus/Ressources/options.png</normaloff>:/menus/Ressources/options.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="lineEditMAC"/>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Nom d'utilisateur Samba : </string>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0" colspan="2">
     <widget class="QLabel" name="label">
      <property name="font">
@@ -52,19 +42,23 @@
      </property>
     </widget>
    </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Nom d'utilisateur Samba : </string>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="1">
     <widget class="QLineEdit" name="lineEditIP"/>
    </item>
-   <item row="4" column="1">
-    <widget class="QLineEdit" name="lineEditUser"/>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="lineEditMAC"/>
    </item>
-   <item row="8" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Mot de passe : </string>
      </property>
     </widget>
    </item>
@@ -75,18 +69,31 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>Mot de passe : </string>
-     </property>
-    </widget>
-   </item>
    <item row="6" column="1">
     <widget class="QLineEdit" name="lineEditFileManager"/>
    </item>
+   <item row="9" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLineEdit" name="lineEditUser"/>
+   </item>
    <item row="5" column="1">
     <widget class="QLineEdit" name="lineEditPass"/>
+   </item>
+   <item row="7" column="1">
+    <widget class="QPushButton" name="pushButtonFileManager">
+     <property name="text">
+      <string>Modifier le gestionnaire</string>
+     </property>
+    </widget>
    </item>
    <item row="6" column="0">
     <widget class="QLabel" name="label_6">
@@ -95,12 +102,15 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="1">
-    <widget class="QPushButton" name="pushButtonFileManager">
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_7">
      <property name="text">
-      <string>Modifier le gestionnaire</string>
+      <string>Nom du partage (Win uniquement)</string>
      </property>
     </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QLineEdit" name="lineEditPartage"/>
    </item>
   </layout>
  </widget>

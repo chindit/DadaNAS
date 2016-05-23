@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QStringList>
+#include <QDebug>
 
 
 class Bash : public QObject
@@ -17,7 +18,7 @@ public:
     bool getServerState(QString ip);
     bool sendStartRequest(QString mac);
     void openShares(QString user, QString pass, QString ip, QString filemanager);
-    void mountShares(bool status, QString ip, QString user, QString password);
+    void mountShares(bool status, QString ip, QString user, QString password, QString partage);
 
 private:
     bool checkConfig(QString ip);
