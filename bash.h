@@ -5,7 +5,6 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QStringList>
-#include <QDebug>
 
 
 class Bash : public QObject

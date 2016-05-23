@@ -66,8 +66,7 @@ void Core::startServer(){
         return;
     }
     //Starting server
-    //bool result = insBash->sendStartRequest(insTools->getSetting(MAC));
-    bool result = true;
+    bool result = insBash->sendStartRequest(insTools->getSetting(MAC));
     if(result){
         QMessageBox::information(this, "Requête envoyée", QString("La demande de démarrage a bien été envoyée.  Le serveur sera allumé d'ici %1 secondes environ.").arg(SECFORSTART));
         startTimer->setInterval(1000);
