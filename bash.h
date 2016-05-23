@@ -12,6 +12,8 @@ class Bash : public QObject
     Q_OBJECT
 public:
     explicit Bash(QWidget *parent = 0);
+    ~Bash();
+
     bool getServerState(QString ip);
     bool sendStartRequest(QString mac);
     void openShares(QString user, QString pass, QString ip, QString filemanager);
@@ -20,6 +22,7 @@ public:
 private:
     bool checkConfig(QString ip);
     QWidget *parent;
+    QTime *lastCheck;
 
 signals:
 

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Core</string>
+   <string>DadaNAS</string>
   </property>
   <property name="windowIcon">
    <iconset resource="pictures.qrc">
@@ -164,7 +164,7 @@
    </widget>
    <widget class="QMenu" name="menuFichier">
     <property name="title">
-     <string>Fichier</string>
+     <string>Fichie&amp;r</string>
     </property>
     <addaction name="actionQuitter"/>
    </widget>
@@ -197,7 +197,7 @@
      <normaloff>:/menus/Ressources/options.png</normaloff>:/menus/Ressources/options.png</iconset>
    </property>
    <property name="text">
-    <string>Options</string>
+    <string>&amp;Options</string>
    </property>
   </action>
   <action name="actionQuitter">
@@ -206,7 +206,7 @@
      <normaloff>:/menus/Ressources/quitter.png</normaloff>:/menus/Ressources/quitter.png</iconset>
    </property>
    <property name="text">
-    <string>Quitter</string>
+    <string>&amp;Quitter</string>
    </property>
   </action>
  </widget>

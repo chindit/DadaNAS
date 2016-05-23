@@ -1,8 +1,11 @@
 #include "bash.h"
 
 Bash::Bash(QWidget *parent) : QObject(parent){
-    //Nothing to do
     this->parent = parent;
+}
+
+Bash::~Bash(){
+    delete this->parent;
 }
 
 bool Bash::getServerState(QString ip){

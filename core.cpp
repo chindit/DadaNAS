@@ -5,6 +5,9 @@ Core::Core(QWidget *parent) : QMainWindow(parent), ui(new Ui::Core){
     ui->setupUi(this);
     insBash = new Bash();
     insTools = new ToolsDialog(this);
+    lastCheck = new QTime();
+    startTimer = new QTimer(this);
+
 
     connect(ui->pushButtonCheckState, SIGNAL(clicked()), this, SLOT(checkServerState()));
     connect(ui->pushButtonStart, SIGNAL(clicked()), this, SLOT(startServer()));
@@ -21,9 +24,15 @@ Core::~Core(){
     delete ui;
     delete insBash;
     delete insTools;
+    delete startTimer;
+    delete lastCheck;
 }
 
 void Core::checkServerState(){
+    if(!this->lastCheck->isNull() && this->lastCheck->elapsed() < 60000){
+        return;
+    }
+    this->lastCheck->restart();
     QMovie *gifLoader = new QMovie(":/pictures/Ressources/loader.gif");
     ui->labelEtat->setMovie(gifLoader);
     ui->labelEtat->movie()->start();
@@ -32,10 +41,12 @@ void Core::checkServerState(){
 
     bool isActive = insBash->getServerState(insTools->getSetting(IP));
     if(isActive){
+        this->serverState = UP;
         ui->labelEtat->setText("Serveur actif!");
         ui->labelEtat->setStyleSheet("QLabel{ color: green; font-weight: bold;}");
     }
     else{
+        this->serverState = DOWN;
         ui->labelEtat->setText("Serveur inactif!");
         ui->labelEtat->setStyleSheet("QLabel{ color: red; font-weight: bold;}");
     }
@@ -43,19 +54,30 @@ void Core::checkServerState(){
 }
 
 void Core::startServer(){
-    if(insBash->getServerState(insTools->getSetting(IP))){
+    if(this->startupOrder){
+        QMessageBox::warning(this, "Ordre déjà envoyé", "La demande de démarrage a déjà été envoyée.  Veuillez patienter.  Merci");
+        return;
+    }
+    if(this->serverState == UNKNOWN){
+        checkServerState();
+    }
+    if(this->serverState == UP){
         QMessageBox::information(this, "Serveur en cours d'exécution", "Le serveur est déjà allumé.  Il est donc inutile de lui envoyer un ordre de démarrage");
         return;
     }
     //Starting server
-    bool result = insBash->sendStartRequest(insTools->getSetting(MAC));
+    //bool result = insBash->sendStartRequest(insTools->getSetting(MAC));
+    bool result = true;
     if(result){
-        QMessageBox::information(this, "Requête envoyée", "La demande de démarrage a bien été envoyée.  Le serveur sera allumé d'ici une ou deux minutes.");
-        startTimer = new QTimer(this);
-        startTimer->setInterval(2*60*1000);
-        startTimer->setSingleShot(true);
+        QMessageBox::information(this, "Requête envoyée", QString("La demande de démarrage a bien été envoyée.  Le serveur sera allumé d'ici %1 secondes environ.").arg(SECFORSTART));
+        startTimer->setInterval(1000);
+        startTimer->setSingleShot(false);
         connect(startTimer, SIGNAL(timeout()), this, SLOT(timerServerState()));
         startTimer->start();
+        this->secForStart = SECFORSTART; //Timer set to full time
+        ui->pushButtonCheckState->setEnabled(false);
+        this->startupOrder = true;
+        ui->labelEtat->setText(QString("Démarré dans %1 sec").arg(this->secForStart));
     }
     else{
         QMessageBox::warning(this, "Échec du démarrage", "La demande de démarrage n'a pas pu être envoyée.  Vérifiez que:\n1)La commande «wol» est bien disponible sur votre système (sinon, installez-la)"
@@ -65,8 +87,10 @@ void Core::startServer(){
 }
 
 void Core::changeStopPolicy(bool status){
-    if(!insBash->getServerState(insTools->getSetting(IP)))
+    if(!this->serverState == UP){
+        ui->pushButtonStopPolicy->setChecked(!status); //Prevent from changing state
         return;
+    }
 
     QString url = "http://"+insTools->getSetting(IP)+"/nas.php?action=";
     url += ((status) ? "noshutdown" : "shutdown");
@@ -105,6 +129,9 @@ void Core::changeStopPolicy(bool status){
 }
 
 void Core::viewShares(){
+    if(!this->serverState == UP){
+        return;
+    }
 #ifndef Q_OS_UNIX
     QMessageBox::warning(this, "Système non compatible", "Malheureusement, cette fonctionnalité n'est pour l'instant compatible qu'avec les systèmes UNIX");
 #else
@@ -113,8 +140,10 @@ void Core::viewShares(){
 }
 
 void Core::mountShares(bool status){
-    if(!insBash->getServerState(insTools->getSetting(IP)))
+    if(!this->serverState == UP){
+        ui->pushButtonMountShare->setChecked(!status);
         return;
+    }
     insBash->mountShares(status, insTools->getSetting(IP), insTools->getSetting(User), insTools->getSetting(Pass));
     if(status){
         ui->pushButtonMountShare->setText("Démonter les répertoires partagés");
@@ -128,9 +157,17 @@ void Core::mountShares(bool status){
 }
 
 void Core::timerServerState(){
-    this->checkServerState();
-    if(ui->labelEtat->text() == "Serveur actif!"){
-        QMessageBox::information(this, "Serveur démarré", "Le serveur a correctement démarré.  Bonne utilisation ;)");
+    this->secForStart--;
+    if(this->secForStart <= 0){
+        this->checkServerState();
+        ui->pushButtonCheckState->setEnabled(true);
+        this->startupOrder = false;
+        if(ui->labelEtat->text() == "Serveur actif!"){
+            QMessageBox::information(this, "Serveur démarré", "Le serveur a correctement démarré.  Bonne utilisation ;)");
+        }
+    }
+    else{
+        ui->labelEtat->setText(QString("Démarré dans %1 sec").arg(this->secForStart));
     }
     return;
 }
