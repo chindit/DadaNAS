@@ -2,6 +2,7 @@
 #define TOOLSDIALOG_H
 
 #include <QDialog>
+#include <QFileDialog>
 #include <QSettings>
 #include <QVariant>
 
@@ -21,7 +22,7 @@ public:
     QString getSetting(Settings name);
 
 public slots:
-    //void show();
+    void selectFileManager();
 
 private slots:
     void accept();

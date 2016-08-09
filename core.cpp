@@ -1,6 +1,10 @@
 #include "core.h"
 #include "ui_core.h"
 
+/**
+ * @brief Core::Core Constructor
+ * @param parent
+ */
 Core::Core(QWidget *parent) : QMainWindow(parent), ui(new Ui::Core){
     ui->setupUi(this);
     insBash = new Bash();
@@ -18,8 +22,12 @@ Core::Core(QWidget *parent) : QMainWindow(parent), ui(new Ui::Core){
     connect(ui->action_propos_de_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     connect(ui->action_propos_de_DadaNAS, SIGNAL(triggered()), this, SLOT(about()));
     connect(ui->actionQuitter, SIGNAL(triggered()), qApp, SLOT(quit()));
+    connect(startTimer, SIGNAL(timeout()), this, SLOT(timerServerState()));
 }
 
+/**
+ * @brief Core::~Core Destructor
+ */
 Core::~Core(){
     delete ui;
     delete insBash;
@@ -28,6 +36,9 @@ Core::~Core(){
     delete lastCheck;
 }
 
+/**
+ * @brief Core::checkServerState Check if NAS is UP and Running
+ */
 void Core::checkServerState(){
     if(!this->lastCheck->isNull() && this->lastCheck->elapsed() < 60000){
         return;
@@ -44,6 +55,9 @@ void Core::checkServerState(){
         this->serverState = UP;
         ui->labelEtat->setText("Serveur actif!");
         ui->labelEtat->setStyleSheet("QLabel{ color: green; font-weight: bold;}");
+        //If server is active, we check shutdown policy
+        //NOTE : first parameter is useless in this case
+        this->changeStopPolicy(false, true);
     }
     else{
         this->serverState = DOWN;
@@ -53,6 +67,9 @@ void Core::checkServerState(){
     return;
 }
 
+/**
+ * @brief Core::startServer Request NAS startup
+ */
 void Core::startServer(){
     if(this->startupOrder){
         QMessageBox::warning(this, "Ordre déjà envoyé", "La demande de démarrage a déjà été envoyée.  Veuillez patienter.  Merci");
@@ -68,11 +85,11 @@ void Core::startServer(){
     //Starting server
     bool result = insBash->sendStartRequest(insTools->getSetting(MAC));
     if(result){
-        QMessageBox::information(this, "Requête envoyée", QString("La demande de démarrage a bien été envoyée.  Le serveur sera allumé d'ici %1 secondes environ.").arg(SECFORSTART));
+        //Start timer first.  Else, timer will only start when user close dialog
         startTimer->setInterval(1000);
         startTimer->setSingleShot(false);
-        connect(startTimer, SIGNAL(timeout()), this, SLOT(timerServerState()));
         startTimer->start();
+        QMessageBox::information(this, "Requête envoyée", QString("La demande de démarrage a bien été envoyée.  Le serveur sera allumé d'ici %1 secondes environ.").arg(SECFORSTART));
         this->secForStart = SECFORSTART; //Timer set to full time
         ui->pushButtonCheckState->setEnabled(false);
         this->startupOrder = true;
@@ -85,33 +102,37 @@ void Core::startServer(){
     return;
 }
 
-void Core::changeStopPolicy(bool status){
+/**
+ * @brief Core::changeStopPolicy Change stop policy for NAS
+ * @param status Prevent (true) or not (false) NAS automatic shutdown
+ * @param check Just check (true) Shutdown policy but don't change it
+ */
+void Core::changeStopPolicy(bool status, bool check){
     if(!this->serverState == UP){
         ui->pushButtonStopPolicy->setChecked(!status); //Prevent from changing state
         return;
     }
 
-    QString url = "http://"+insTools->getSetting(IP)+"/nas.php?action=";
-    url += ((status) ? "noshutdown" : "shutdown");
-    QNetworkAccessManager nw_manager;
-    QNetworkRequest request(url);
-    QNetworkReply *reponse = nw_manager.get(request);
-    QEventLoop eventLoop;
-    QObject::connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-    eventLoop.exec();
-    QByteArray data = reponse->readAll();
+    //Creating status
+    QString action = ((status) ? "noshutdown" : "shutdown");
 
-    //Reading result
-    QJsonDocument jsonAnswer = QJsonDocument::fromJson(data);
-    QJsonObject jsonResponse = jsonAnswer.object();
+    //If check -> no need for action
+    if(check)
+        action = "none";
+
+    //Getting response
+    QJsonObject jsonResponse = this->callServer(action);
     bool actionSuccessful = jsonResponse.value("result").toBool(false);
     bool isShutdownPrevented = jsonResponse.value("shutdown").toBool(false);
 
-    if(!actionSuccessful){
+    //Checking for error
+    if(!actionSuccessful && !check){
+        //If «check» is true, «result» will not exists and is set to false by default -> preventing error from triggering
         QMessageBox::critical(this, "Une erreur est survenue", "Une erreur inattendue est survenue.  L'opération n'a pas pu être exécutée!");
         return;
     }
 
+    //Changing status
     if(isShutdownPrevented){
         ui->labelStopPolicy->setText("Arrêt interdit");
         ui->labelStopPolicy->setStyleSheet("QLabel { color: blue; font-weight: bold; }");
@@ -127,6 +148,9 @@ void Core::changeStopPolicy(bool status){
     return;
 }
 
+/**
+ * @brief Core::viewShares Open Samba shares in the given explorer
+ */
 void Core::viewShares(){
     if(!this->serverState == UP){
         return;
@@ -138,6 +162,10 @@ void Core::viewShares(){
 #endif
 }
 
+/**
+ * @brief Core::mountShares Mount and unmount Samba shares
+ * @param status button status -> (un)mounting drives
+ */
 void Core::mountShares(bool status){
     if(!this->serverState == UP){
         ui->pushButtonMountShare->setChecked(!status);
@@ -159,9 +187,13 @@ void Core::mountShares(bool status){
     return;
 }
 
+/**
+ * @brief Core::timerServerState Update the timer shown for NAS startup
+ */
 void Core::timerServerState(){
     this->secForStart--;
     if(this->secForStart <= 0){
+        this->startTimer->stop();
         this->checkServerState();
         ui->pushButtonCheckState->setEnabled(true);
         this->startupOrder = false;
@@ -175,8 +207,35 @@ void Core::timerServerState(){
     return;
 }
 
+/**
+ * @brief Core::about Shows the «About» box
+ */
 void Core::about(){
     QString string_about = ("<h2>À propos de DadaNAS</h2><br><b>Dévoloppé par</b> : David Lumaye<br><b>Version</b> : ")+QString(VERSION)+tr("<br><b>Courriel</b>:littletiger58.aro-base.gmail.com<br><b>Distribué sous license</b> : <a href='http://www.gnu.org/licenses/gpl-3.0.fr.html'>GPL 3</a>");
     QMessageBox::about(this, tr("À propos de DadaNAS"), string_about);
     return;
+}
+
+/**
+ * @brief Core::callServer Interact with the NAS
+ * @param action Action parameter to send to the script
+ * @return QJsonObject : JSON response from the NAS
+ */
+QJsonObject Core::callServer(QString action){
+    //No need to verify Action.  An empty string will also work, we just have shutdown status in this case
+    QString url = "http://"+insTools->getSetting(IP)+"/nas.php?action="+action;
+    QNetworkAccessManager nw_manager;
+    QNetworkRequest request(url);
+    QNetworkReply *reponse = nw_manager.get(request);
+    QEventLoop eventLoop;
+    QObject::connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+    eventLoop.exec();
+    QByteArray data = reponse->readAll();
+
+    //Reading result
+    QJsonDocument jsonAnswer = QJsonDocument::fromJson(data);
+    QJsonObject jsonResponse = jsonAnswer.object();
+
+    //Returning response
+    return jsonResponse;
 }

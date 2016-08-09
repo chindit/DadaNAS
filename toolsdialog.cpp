@@ -34,6 +34,8 @@ ToolsDialog::ToolsDialog(QWidget *parent) : QDialog(parent), ui(new Ui::ToolsDia
     ui->lineEditPass->setText(settings[Pass].toString());
     ui->lineEditFileManager->setText(settings[FileManager].toString());
     ui->lineEditPartage->setText(settings[Partage].toString());
+
+    connect(ui->pushButtonFileManager, SIGNAL(clicked()), this, SLOT(selectFileManager()));
 }
 
 ToolsDialog::~ToolsDialog()
@@ -41,13 +43,17 @@ ToolsDialog::~ToolsDialog()
     delete ui;
 }
 
-/*void ToolsDialog::show(){
-    //Setting values
-
-
-    this->show();
-    return;
-}*/
+void ToolsDialog::selectFileManager(){
+    QString extension = "FileManager (*";
+#ifdef Q_OS_WIN
+    exension += ".exe";
+#endif
+            extension += ")";
+    QString fileManager = QFileDialog::getOpenFileName(this, "Explorateur de fichier", QDir::homePath(), extension);
+    if(!fileManager.isEmpty()){
+        ui->lineEditFileManager->setText(fileManager);
+    }
+}
 
 void ToolsDialog::accept(){
     settings[IP] = ui->lineEditIP->text();

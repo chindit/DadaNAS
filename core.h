@@ -37,13 +37,16 @@ public slots:
     void startServer();
 
 private slots:
-    void changeStopPolicy(bool status);
+    void changeStopPolicy(bool status, bool check=false);
     void viewShares();
     void mountShares(bool status);
     void about();
     void timerServerState();
 
 private:
+    bool getStopPolicy();
+    QJsonObject callServer(QString action);
+
     Ui::Core *ui;
     Bash *insBash;
     ToolsDialog *insTools;

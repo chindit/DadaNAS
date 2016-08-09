@@ -1,12 +1,12 @@
 <?php
 if(isset($_GET['action'])){
 	$json = array();
-        switch($_GET['action']){
-                case 'noshutdown':
+	switch($_GET['action']){
+		case 'noshutdown':
 			$file = fopen('tmp/noshutdown', 'w');
-                        $result = fclose($file);
+			$result = fclose($file);
 			$json['result'] = $result; 
-                break;
+		break;
 		case 'shutdown':
 			$result = true;
 			if(file_exists('tmp/noshutdown')){
@@ -15,9 +15,10 @@ if(isset($_GET['action'])){
 			$json['result'] = $result;
 		break;
 		default:
-			echo json_encode(array('result' => false));
-                break;
-        }
+			//By default, «result» is set to «false»
+			$json['result'] => false));
+		break;
+	}
 	//Dans tous les cas, on affiche le status
 	$json['shutdown'] = file_exists('tmp/noshutdown');
 	echo json_encode($json);
