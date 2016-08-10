@@ -46,7 +46,7 @@ ToolsDialog::~ToolsDialog()
 void ToolsDialog::selectFileManager(){
     QString extension = "FileManager (*";
 #ifdef Q_OS_WIN
-    exension += ".exe";
+    extension += ".exe";
 #endif
             extension += ")";
     QString fileManager = QFileDialog::getOpenFileName(this, "Explorateur de fichier", QDir::homePath(), extension);

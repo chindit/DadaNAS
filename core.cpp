@@ -12,7 +12,11 @@ Core::Core(QWidget *parent) : QMainWindow(parent), ui(new Ui::Core){
     lastCheck = new QTime();
     startTimer = new QTimer(this);
 
+    //Setting statusBar
+    ui->statusBar->setEnabled(true);
+    ui->statusBar->showMessage("Bienvenue dans DadaNAS");
 
+    //Connecting Signals/Slots
     connect(ui->pushButtonCheckState, SIGNAL(clicked()), this, SLOT(checkServerState()));
     connect(ui->pushButtonStart, SIGNAL(clicked()), this, SLOT(startServer()));
     connect(ui->pushButtonStopPolicy, SIGNAL(clicked(bool)), this, SLOT(changeStopPolicy(bool)));
@@ -89,11 +93,11 @@ void Core::startServer(){
         startTimer->setInterval(1000);
         startTimer->setSingleShot(false);
         startTimer->start();
-        QMessageBox::information(this, "Requête envoyée", QString("La demande de démarrage a bien été envoyée.  Le serveur sera allumé d'ici %1 secondes environ.").arg(SECFORSTART));
         this->secForStart = SECFORSTART; //Timer set to full time
         ui->pushButtonCheckState->setEnabled(false);
         this->startupOrder = true;
         ui->labelEtat->setText(QString("Démarré dans %1 sec").arg(this->secForStart));
+        ui->statusBar->showMessage("Ordre de démarrage envoyé", 5000);
     }
     else{
         QMessageBox::warning(this, "Échec du démarrage", "La demande de démarrage n'a pas pu être envoyée.  Vérifiez que:\n1)La commande «wol» est bien disponible sur votre système (sinon, installez-la)"
@@ -198,7 +202,9 @@ void Core::timerServerState(){
         ui->pushButtonCheckState->setEnabled(true);
         this->startupOrder = false;
         if(ui->labelEtat->text() == "Serveur actif!"){
-            QMessageBox::information(this, "Serveur démarré", "Le serveur a correctement démarré.  Bonne utilisation ;)");
+            //Alert is useless -> showing in statusbar
+            //QMessageBox::information(this, "Serveur démarré", "Le serveur a correctement démarré.  Bonne utilisation ;)");
+            ui->statusBar->showMessage("Serveur démarré.  Bonne utilisation", 5000);
         }
     }
     else{
