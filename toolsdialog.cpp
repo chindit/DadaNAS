@@ -2,8 +2,8 @@
 #include "ui_toolsdialog.h"
 
 ToolsDialog::ToolsDialog(QWidget *parent) : QDialog(parent), ui(new Ui::ToolsDialog){
-    names = new QString[6];
-    settings = new QVariant[6];
+    names = new QString[7];
+    settings = new QVariant[7];
 
     names[IP] = "IP";
     names[MAC] = "MAC";
@@ -11,6 +11,7 @@ ToolsDialog::ToolsDialog(QWidget *parent) : QDialog(parent), ui(new Ui::ToolsDia
     names[Pass] = "Password";
     names[FileManager] = "FileManager";
     names[Partage] = "Partage";
+    names[AutoCheck] = "AutoCheck";
 
     QSettings options("DadaNAS", "dadanas");
     settings[IP] = options.value(names[IP], "0.0.0.0");
@@ -18,6 +19,7 @@ ToolsDialog::ToolsDialog(QWidget *parent) : QDialog(parent), ui(new Ui::ToolsDia
     settings[User] = options.value(names[User], "");
     settings[Pass] = options.value(names[Pass], "");
     settings[Partage] = options.value(names[Partage], "public");
+    settings[AutoCheck] = options.value(names[AutoCheck], true);
 #ifdef Q_OS_UNIX
     settings[FileManager] = options.value(names[FileManager], "dolphin");
 #elif defined(Q_OS_WIN)
@@ -34,6 +36,7 @@ ToolsDialog::ToolsDialog(QWidget *parent) : QDialog(parent), ui(new Ui::ToolsDia
     ui->lineEditPass->setText(settings[Pass].toString());
     ui->lineEditFileManager->setText(settings[FileManager].toString());
     ui->lineEditPartage->setText(settings[Partage].toString());
+    ui->checkBoxAutoCheck->setChecked(settings[AutoCheck].toBool());
 
     connect(ui->pushButtonFileManager, SIGNAL(clicked()), this, SLOT(selectFileManager()));
 }
@@ -62,6 +65,7 @@ void ToolsDialog::accept(){
     settings[Pass] = ui->lineEditPass->text();
     settings[FileManager] = ui->lineEditFileManager->text();
     settings[Partage] = ui->lineEditPartage->text();
+    settings[AutoCheck] = ui->checkBoxAutoCheck->isChecked();
 
     QSettings options("DadaNAS", "dadanas");
     options.setValue(names[IP], settings[IP]);
@@ -70,6 +74,7 @@ void ToolsDialog::accept(){
     options.setValue(names[Pass], settings[Pass]);
     options.setValue(names[FileManager], settings[FileManager]);
     options.setValue(names[Partage], settings[Partage]);
+    options.setValue(names[AutoCheck], settings[AutoCheck]);
 
     this->hide();
 }

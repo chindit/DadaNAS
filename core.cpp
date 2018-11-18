@@ -16,6 +16,15 @@ Core::Core(QWidget *parent) : QMainWindow(parent), ui(new Ui::Core){
     ui->statusBar->setEnabled(true);
     ui->statusBar->showMessage("Bienvenue dans DadaNAS");
 
+    /**
+      Enable timer for auto-check if needed
+    */
+    if (insTools->getSetting(AutoCheck) == "true"){
+        QTimer *autoCheckTimer = new QTimer(this);
+        autoCheckTimer->setInterval(60000);
+        connect(autoCheckTimer, SIGNAL(timeout()), this, SLOT(checkServerState()));
+    }
+
     //Connecting Signals/Slots
     connect(ui->pushButtonCheckState, SIGNAL(clicked()), this, SLOT(checkServerState()));
     connect(ui->pushButtonStart, SIGNAL(clicked()), this, SLOT(startServer()));
@@ -72,6 +81,18 @@ void Core::checkServerState(){
 }
 
 /**
+ * @brief Core::getServerState Get current server state
+ * @return
+ */
+bool Core::getServerState(){
+    if(!this->lastCheck->isNull() && this->lastCheck->elapsed() < 60000){
+        return this->serverState == UP;
+    }
+
+    return false;
+}
+
+/**
  * @brief Core::startServer Request NAS startup
  */
 void Core::startServer(){
@@ -83,8 +104,15 @@ void Core::startServer(){
         checkServerState();
     }
     if(this->serverState == UP){
-        QMessageBox::information(this, "Serveur en cours d'exécution", "Le serveur est déjà allumé.  Il est donc inutile de lui envoyer un ordre de démarrage");
-        return;
+        if (!this->getServerState()){
+            QMessageBox::information(this, "Serveur en cours d'exécution", "Le serveur est déjà allumé.  Il est donc inutile de lui envoyer un ordre de démarrage");
+            return;
+        } else {
+            this->checkServerState();
+            if (this->getServerState()) {
+                return;
+            }
+        }
     }
     //Starting server
     bool result = insBash->sendStartRequest(insTools->getSetting(MAC));
@@ -112,7 +140,7 @@ void Core::startServer(){
  * @param check Just check (true) Shutdown policy but don't change it
  */
 void Core::changeStopPolicy(bool status, bool check){
-    if(!this->serverState == UP){
+    if(this->serverState != UP){
         ui->pushButtonStopPolicy->setChecked(!status); //Prevent from changing state
         return;
     }
@@ -156,7 +184,7 @@ void Core::changeStopPolicy(bool status, bool check){
  * @brief Core::viewShares Open Samba shares in the given explorer
  */
 void Core::viewShares(){
-    if(!this->serverState == UP){
+    if(this->serverState != UP){
         return;
     }
 #if defined(Q_OS_UNIX) || defined(Q_OS_WIN)
@@ -171,7 +199,7 @@ void Core::viewShares(){
  * @param status button status -> (un)mounting drives
  */
 void Core::mountShares(bool status){
-    if(!this->serverState == UP){
+    if(this->serverState != UP){
         ui->pushButtonMountShare->setChecked(!status);
         return;
     }

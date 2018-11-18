@@ -42,6 +42,7 @@ private slots:
     void mountShares(bool status);
     void about();
     void timerServerState();
+    bool getServerState();
 
 private:
     bool getStopPolicy();

@@ -76,7 +76,7 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="0">
+   <item row="11" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -115,6 +115,16 @@
    </item>
    <item row="8" column="1">
     <widget class="QLineEdit" name="lineEditPartage"/>
+   </item>
+   <item row="9" column="0" colspan="2">
+    <widget class="QCheckBox" name="checkBoxAutoCheck">
+     <property name="layoutDirection">
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text">
+      <string>Vérifier la présence en ligne toutes les minutes</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
