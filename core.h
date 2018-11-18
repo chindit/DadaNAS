@@ -15,7 +15,7 @@
 #include "bash.h"
 #include "toolsdialog.h"
 
-#define VERSION "0.2"
+#define VERSION "0.3"
 #define SECFORSTART 90 //Time before checking server for startup
 
 namespace Ui {

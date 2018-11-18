@@ -23,6 +23,7 @@ Core::Core(QWidget *parent) : QMainWindow(parent), ui(new Ui::Core){
         QTimer *autoCheckTimer = new QTimer(this);
         autoCheckTimer->setInterval(60000);
         connect(autoCheckTimer, SIGNAL(timeout()), this, SLOT(checkServerState()));
+        autoCheckTimer->start();
     }
 
     //Connecting Signals/Slots
